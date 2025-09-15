@@ -24,7 +24,7 @@ const TraceProduce = () => {
         actor: "Green Valley Farm",
         location: "Sonoma County, CA",
         timestamp: "2024-01-15T08:00:00Z",
-        price: "$2.50/lb",
+        price: "₹200/kg",
         details: "Harvested from organic greenhouse. Quality grade A.",
         verified: true
       },
@@ -33,7 +33,7 @@ const TraceProduce = () => {
         actor: "FreshLink Distributors",
         location: "San Francisco, CA",
         timestamp: "2024-01-16T14:30:00Z",
-        price: "$3.20/lb",
+        price: "₹256/kg",
         details: "Temperature controlled transport. Quality maintained.",
         verified: true
       },
@@ -42,7 +42,7 @@ const TraceProduce = () => {
         actor: "Whole Foods Market",
         location: "Palo Alto, CA",
         timestamp: "2024-01-17T09:15:00Z",
-        price: "$4.99/lb",
+        price: "₹399/kg",
         details: "Final retail sale. Available to consumers.",
         verified: true
       }

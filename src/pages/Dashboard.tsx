@@ -133,7 +133,7 @@ const Dashboard = () => {
 const FarmerDashboard = () => {
   const stats = [
     { label: "Active Batches", value: "24", change: "+12%" },
-    { label: "Total Revenue", value: "$15,840", change: "+8%" },
+    { label: "Total Revenue", value: "₹1,26,720", change: "+8%" },
     { label: "QR Codes Generated", value: "156", change: "+15%" },
     { label: "Quality Score", value: "98%", change: "+2%" }
   ];
