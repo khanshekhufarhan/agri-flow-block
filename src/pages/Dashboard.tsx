@@ -97,7 +97,7 @@ const Dashboard = () => {
                       </div>
                     ))}
                   </div>
-                  <Button className="w-full mt-4" variant="outline">
+                  <Button className="w-full mt-4 text-primary border-primary hover:bg-primary hover:text-primary-foreground" variant="outline">
                     Access Dashboard
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
