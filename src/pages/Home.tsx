@@ -60,7 +60,7 @@ const Home = () => {
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
+              <Button size="lg" variant="outline" className="border-white text-primary bg-white/10 hover:bg-white hover:text-primary">
                 <Link to="/dashboard">
                   Access Dashboard
                 </Link>
