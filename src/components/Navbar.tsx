@@ -41,12 +41,17 @@ export const Navbar = () => {
                 Sign Out
               </Button>
             ) : (
-              <Button asChild variant="outline" size="sm" className="ml-4">
-                <Link to="/auth">
-                  <User className="h-4 w-4 mr-2" />
-                  Login
-                </Link>
-              </Button>
+              <div className="flex items-center gap-2 ml-4">
+                <Button asChild variant="outline" size="sm">
+                  <Link to="/auth?tab=signin">
+                    <User className="h-4 w-4 mr-2" />
+                    Log In
+                  </Link>
+                </Button>
+                <Button asChild variant="hero" size="sm">
+                  <Link to="/auth?tab=signup">Sign Up</Link>
+                </Button>
+              </div>
             )}
           </div>
 
@@ -86,12 +91,17 @@ export const Navbar = () => {
                   Sign Out
                 </Button>
               ) : (
-                <Button asChild variant="outline" size="sm" className="mx-3 mt-2">
-                  <Link to="/auth">
-                    <User className="h-4 w-4 mr-2" />
-                    Login
-                  </Link>
-                </Button>
+                <div className="flex flex-col gap-2 mx-3 mt-2">
+                  <Button asChild variant="outline" size="sm">
+                    <Link to="/auth?tab=signin">
+                      <User className="h-4 w-4 mr-2" />
+                      Log In
+                    </Link>
+                  </Button>
+                  <Button asChild variant="hero" size="sm">
+                    <Link to="/auth?tab=signup">Sign Up</Link>
+                  </Button>
+                </div>
               )}
             </div>
           </div>

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,6 +17,7 @@ const PENDING_REG_KEY = 'pending_registration_v1';
 
 const Auth = () => {
   const { signIn, signUp, resetPassword, user, loading } = useAuth();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin');
   const [isLoading, setIsLoading] = useState(false);
   const [useOtp, setUseOtp] = useState(false);
@@ -62,6 +63,15 @@ const Auth = () => {
   const handleSigninChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSigninData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
+
+  // Read ?tab=signup or ?tab=signin from URL
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tab = params.get('tab');
+    if (tab === 'signup' || tab === 'signin') {
+      setActiveTab(tab);
+    }
+  }, [location.search]);
 
   const handleSignupAccountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSignupAccount(prev => ({ ...prev, [e.target.name]: e.target.value }));
