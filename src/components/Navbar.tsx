@@ -3,9 +3,11 @@ import { Sprout, User, Menu, LogOut } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import AuthGuardModal from "@/components/AuthGuardModal";
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showGuard, setShowGuard] = useState(false);
   const location = useLocation();
   const { user, signOut } = useAuth();
 
@@ -30,11 +32,20 @@ export const Navbar = () => {
             }`}>
               Trace Produce
             </Link>
-            <Link to="/dashboard" className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-              isActive("/dashboard") ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground"
-            }`}>
+            <button
+              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                isActive("/dashboard") ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground"
+              }`}
+              onClick={() => {
+                if (!user) {
+                  setShowGuard(true);
+                } else {
+                  window.location.href = "/dashboard";
+                }
+              }}
+            >
               Dashboard
-            </Link>
+            </button>
             {user ? (
               <Button variant="outline" size="sm" className="ml-4" onClick={signOut}>
                 <LogOut className="h-4 w-4 mr-2" />
@@ -78,13 +89,19 @@ export const Navbar = () => {
               >
                 Trace Produce
               </Link>
-              <Link
-                to="/dashboard"
-                className="px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground"
-                onClick={() => setIsMenuOpen(false)}
+              <button
+                className="px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground text-left"
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  if (!user) {
+                    setShowGuard(true);
+                  } else {
+                    window.location.href = "/dashboard";
+                  }
+                }}
               >
                 Dashboard
-              </Link>
+              </button>
               {user ? (
                 <Button variant="outline" size="sm" className="mx-3 mt-2" onClick={signOut}>
                   <LogOut className="h-4 w-4 mr-2" />
@@ -107,6 +124,7 @@ export const Navbar = () => {
           </div>
         )}
       </div>
+      <AuthGuardModal open={showGuard} onOpenChange={setShowGuard} />
     </nav>
   );
 };

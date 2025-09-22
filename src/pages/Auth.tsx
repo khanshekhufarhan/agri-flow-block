@@ -142,12 +142,6 @@ const Auth = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10 p-4">
       <div className="max-w-3xl mx-auto relative">
-        {/* Top-right Login / Sign Up buttons */}
-        <div className="absolute right-0 -top-2 hidden sm:flex gap-2">
-          <Button variant={activeTab === 'signin' ? 'hero' : 'outline'} size="sm" onClick={() => setActiveTab('signin')}>Log In</Button>
-          <Button variant={activeTab === 'signup' ? 'hero' : 'outline'} size="sm" onClick={() => setActiveTab('signup')}>Sign Up</Button>
-        </div>
-
         <Card className="w-full shadow-medium">
           <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">

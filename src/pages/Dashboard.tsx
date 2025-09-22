@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +12,8 @@ import {
   ArrowRight 
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 type UserRole = "farmer" | "distributor" | "retailer" | "consumer" | "admin" | null;
 
@@ -131,18 +133,32 @@ const Dashboard = () => {
 
 // Farmer Dashboard Component
 const FarmerDashboard = () => {
-  const stats = [
-    { label: "Active Batches", value: "24", change: "+12%" },
-    { label: "Total Revenue", value: "₹1,26,720", change: "+8%" },
-    { label: "QR Codes Generated", value: "156", change: "+15%" },
-    { label: "Quality Score", value: "98%", change: "+2%" }
-  ];
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [batches, setBatches] = useState<Array<{ id: string; crop_type: string; batch_code: string; status: string | null; created_at: string }>>([]);
+  const [error, setError] = useState<string | null>(null);
 
-  const recentBatches = [
-    { id: "BATCH-2024-001", crop: "Organic Tomatoes", status: "In Transit", date: "2024-01-15" },
-    { id: "BATCH-2024-002", crop: "Bell Peppers", status: "Delivered", date: "2024-01-14" },
-    { id: "BATCH-2024-003", crop: "Carrots", status: "Processing", date: "2024-01-13" }
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!user) return;
+      setLoading(true);
+      setError(null);
+      const { data, error } = await supabase
+        .from('produce_batches')
+        .select('id, crop_type, batch_code, status, created_at')
+        .eq('farmer_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(10);
+      if (error) {
+        setError(error.message);
+        setBatches([]);
+      } else {
+        setBatches(data || []);
+      }
+      setLoading(false);
+    };
+    fetchData();
+  }, [user]);
 
   return (
     <div className="py-8">
@@ -150,27 +166,10 @@ const FarmerDashboard = () => {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Farmer Dashboard</h1>
-          <p className="text-muted-foreground">Welcome back, Green Valley Farm</p>
+          <p className="text-muted-foreground">Your recent batches and activity</p>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {stats.map((stat, index) => (
-            <Card key={index} className="shadow-soft">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
-                    <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-                  </div>
-                  <Badge variant="secondary" className="bg-success/10 text-success">
-                    {stat.change}
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        {/* Stats Grid removed since we only show real data */}
 
         {/* Actions */}
         <div className="grid md:grid-cols-2 gap-6 mb-8">
@@ -197,20 +196,28 @@ const FarmerDashboard = () => {
               <CardTitle>Recent Batches</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                {recentBatches.map((batch, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                    <div>
-                      <p className="font-medium text-foreground">{batch.id}</p>
-                      <p className="text-sm text-muted-foreground">{batch.crop}</p>
+              {loading ? (
+                <p className="text-sm text-muted-foreground">Loading...</p>
+              ) : error ? (
+                <p className="text-sm text-destructive">{error}</p>
+              ) : batches.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No records found</p>
+              ) : (
+                <div className="space-y-3">
+                  {batches.map((batch) => (
+                    <div key={batch.id} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+                      <div>
+                        <p className="font-medium text-foreground">{batch.batch_code}</p>
+                        <p className="text-sm text-muted-foreground">{batch.crop_type}</p>
+                      </div>
+                      <div className="text-right">
+                        {batch.status && <Badge variant="outline">{batch.status}</Badge>}
+                        <p className="text-xs text-muted-foreground mt-1">{new Date(batch.created_at).toLocaleDateString()}</p>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <Badge variant="outline">{batch.status}</Badge>
-                      <p className="text-xs text-muted-foreground mt-1">{batch.date}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
