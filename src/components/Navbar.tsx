@@ -1,11 +1,13 @@
 import { Button } from "@/components/ui/button";
-import { Sprout, User, Menu } from "lucide-react";
+import { Sprout, User, Menu, LogOut } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { user, signOut } = useAuth();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -33,10 +35,19 @@ export const Navbar = () => {
             }`}>
               Dashboard
             </Link>
-            <Button variant="outline" size="sm" className="ml-4">
-              <User className="h-4 w-4 mr-2" />
-              Login
-            </Button>
+            {user ? (
+              <Button variant="outline" size="sm" className="ml-4" onClick={signOut}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </Button>
+            ) : (
+              <Button asChild variant="outline" size="sm" className="ml-4">
+                <Link to="/auth">
+                  <User className="h-4 w-4 mr-2" />
+                  Login
+                </Link>
+              </Button>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -69,10 +80,19 @@ export const Navbar = () => {
               >
                 Dashboard
               </Link>
-              <Button variant="outline" size="sm" className="mx-3 mt-2">
-                <User className="h-4 w-4 mr-2" />
-                Login
-              </Button>
+              {user ? (
+                <Button variant="outline" size="sm" className="mx-3 mt-2" onClick={signOut}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign Out
+                </Button>
+              ) : (
+                <Button asChild variant="outline" size="sm" className="mx-3 mt-2">
+                  <Link to="/auth">
+                    <User className="h-4 w-4 mr-2" />
+                    Login
+                  </Link>
+                </Button>
+              )}
             </div>
           </div>
         )}
