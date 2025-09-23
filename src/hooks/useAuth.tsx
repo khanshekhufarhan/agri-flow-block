@@ -60,6 +60,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         title: "Welcome!",
         description: "Account created successfully. You are now logged in.",
       });
+      // Redirect to homepage after successful signup
+      window.location.href = "/";
     }
 
     return { error };
