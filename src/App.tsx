@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import RegisterBatch from "./pages/RegisterBatch";
 import Auth from "./pages/Auth";
 import StakeholderRegistration from "./pages/StakeholderRegistration";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
               <Route path="/register" element={<StakeholderRegistration />} />
               <Route path="/trace" element={<TraceProduce />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/profile" element={<Profile />} />
               <Route path="/farmer/register-batch" element={<RegisterBatch />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

@@ -2,11 +2,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, Shield, Eye, Users, Scan } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import heroImage from "@/assets/hero-farm.jpg";
 import produceQRImage from "@/assets/produce-qr.jpg";
 import farmerTechImage from "@/assets/farmer-tech.jpg";
 
 const Home = () => {
+  const { user } = useAuth();
+  
   const features = [
     {
       icon: Shield,
@@ -60,12 +63,29 @@ const Home = () => {
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" className="border-white bg-white text-primary hover:bg-white/90 hover:text-primary">
-                <Link to="/dashboard" className="flex items-center">
-                  Access Dashboard
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
+              {user ? (
+                <Button size="lg" variant="outline" className="border-white bg-white text-primary hover:bg-white/90 hover:text-primary">
+                  <Link to="/dashboard" className="flex items-center">
+                    Access Dashboard
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                </Button>
+              ) : (
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button size="lg" variant="outline" className="border-white bg-white text-primary hover:bg-white/90 hover:text-primary">
+                    <Link to="/auth?tab=signin" className="flex items-center">
+                      Log In
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Link>
+                  </Button>
+                  <Button size="lg" className="bg-secondary text-white hover:bg-secondary/90">
+                    <Link to="/auth?tab=signup" className="flex items-center">
+                      Sign Up
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Link>
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -166,12 +186,21 @@ const Home = () => {
           <p className="text-xl text-white/90 mb-8">
             Join thousands of farmers, distributors, and retailers building a more transparent future.
           </p>
-          <Button size="lg" className="bg-white text-primary hover:bg-white/90">
-            <Link to="/dashboard" className="flex items-center">
-              Get Started Today
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
-          </Button>
+          {user ? (
+            <Button size="lg" className="bg-white text-primary hover:bg-white/90">
+              <Link to="/dashboard" className="flex items-center">
+                Go to Dashboard
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+            </Button>
+          ) : (
+            <Button size="lg" className="bg-white text-primary hover:bg-white/90">
+              <Link to="/auth?tab=signup" className="flex items-center">
+                Get Started Today
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+            </Button>
+          )}
         </div>
       </section>
     </div>

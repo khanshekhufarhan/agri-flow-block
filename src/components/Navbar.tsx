@@ -47,10 +47,18 @@ export const Navbar = () => {
               Dashboard
             </button>
             {user ? (
-              <Button variant="outline" size="sm" className="ml-4" onClick={signOut}>
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
-              </Button>
+              <div className="flex items-center gap-2 ml-4">
+                <Button asChild variant="outline" size="sm">
+                  <Link to="/profile">
+                    <User className="h-4 w-4 mr-2" />
+                    Profile
+                  </Link>
+                </Button>
+                <Button variant="outline" size="sm" onClick={signOut}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign Out
+                </Button>
+              </div>
             ) : (
               <div className="flex items-center gap-2 ml-4">
                 <Button asChild variant="outline" size="sm">
@@ -103,10 +111,18 @@ export const Navbar = () => {
                 Dashboard
               </button>
               {user ? (
-                <Button variant="outline" size="sm" className="mx-3 mt-2" onClick={signOut}>
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Sign Out
-                </Button>
+                <div className="flex flex-col gap-2 mx-3 mt-2">
+                  <Button asChild variant="outline" size="sm">
+                    <Link to="/profile">
+                      <User className="h-4 w-4 mr-2" />
+                      Profile
+                    </Link>
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={signOut}>
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Sign Out
+                  </Button>
+                </div>
               ) : (
                 <div className="flex flex-col gap-2 mx-3 mt-2">
                   <Button asChild variant="outline" size="sm">
