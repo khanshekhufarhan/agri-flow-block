@@ -64,12 +64,20 @@ const Home = () => {
                 </Link>
               </Button>
               {user ? (
-                <Button size="lg" variant="outline" className="border-white bg-white text-primary hover:bg-white/90 hover:text-primary">
-                  <Link to="/dashboard" className="flex items-center">
-                    Access Dashboard
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-                </Button>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button size="lg" variant="outline" className="border-white bg-white text-primary hover:bg-white/90 hover:text-primary">
+                    <Link to="/dashboard" className="flex items-center">
+                      Access Dashboard
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Link>
+                  </Button>
+                  <Button size="lg" className="bg-secondary text-white hover:bg-secondary/90">
+                    <Link to="/profile" className="flex items-center">
+                      Profile
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Link>
+                  </Button>
+                </div>
               ) : (
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button size="lg" variant="outline" className="border-white bg-white text-primary hover:bg-white/90 hover:text-primary">

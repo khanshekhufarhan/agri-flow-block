@@ -41,30 +41,42 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
+    // Create account without requiring email verification, then sign in directly
+    const { error: signUpError } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/`
-      }
     });
 
-    if (error) {
+    if (signUpError) {
       toast({
         title: "Sign Up Error",
-        description: error.message,
+        description: signUpError.message,
         variant: "destructive",
       });
-    } else {
-      toast({
-        title: "Welcome!",
-        description: "Account created successfully. You are now logged in.",
-      });
-      // Redirect to homepage after successful signup
-      window.location.href = "/";
+      return { error: signUpError };
     }
 
-    return { error };
+    // Immediately sign in to establish a session
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (signInError) {
+      toast({
+        title: "Auto Sign-in Failed",
+        description: signInError.message,
+        variant: "destructive",
+      });
+      return { error: signInError };
+    }
+
+    toast({
+      title: "Welcome!",
+      description: "Account created and you are now logged in.",
+    });
+    // Do not redirect here; allow caller to create profile records first
+    return { error: null };
   };
 
   const signIn = async (email: string, password: string) => {

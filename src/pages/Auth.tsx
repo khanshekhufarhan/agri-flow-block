@@ -112,16 +112,79 @@ const Auth = () => {
     }
 
     setIsLoading(true);
-    // Stash pending registration in localStorage to complete after email verification
-    const pending = {
-      role,
-      profile: signupProfile,
-      aadhaarFileName: aadhaarFile ? aadhaarFile.name : null,
-    };
-    localStorage.setItem(PENDING_REG_KEY, JSON.stringify(pending));
+    const { error } = await signUp(signupAccount.email, signupAccount.password);
+    if (error) {
+      setIsLoading(false);
+      return;
+    }
 
-    await signUp(signupAccount.email, signupAccount.password);
-    setIsLoading(false);
+    // Create profile record immediately after auto-login
+    try {
+      // Fetch current session user id via supabase client
+      const { data: { user: currentUser } } = await (await import('@/integrations/supabase/client')).supabase.auth.getUser();
+      if (!currentUser) throw new Error('No authenticated user');
+
+      // Create base profile
+      const { error: profileErr } = await (await import('@/integrations/supabase/client')).supabase
+        .from('profiles')
+        .insert({
+          user_id: currentUser.id,
+          full_name: signupProfile.fullName,
+          mobile_number: signupProfile.mobileNumber || null,
+          aadhaar_number: signupProfile.aadhaarNumber || null,
+          role: role,
+          verification_status: 'pending'
+        });
+      if (profileErr && profileErr.code !== '23505') { // ignore duplicate if exists
+        throw profileErr;
+      }
+
+      // Retrieve created profile id
+      const { data: profileRow } = await (await import('@/integrations/supabase/client')).supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', currentUser.id)
+        .single();
+
+      if (!profileRow) throw new Error('Profile not found after creation');
+
+      // Create role-specific details
+      if (role === 'farmer') {
+        await (await import('@/integrations/supabase/client')).supabase
+          .from('farmer_details')
+          .insert({
+            profile_id: profileRow.id,
+            pm_kisan_id: signupProfile.pmKisanId || null,
+            farm_address: signupProfile.landOrFpoId || null,
+          });
+      } else if (role === 'distributor') {
+        await (await import('@/integrations/supabase/client')).supabase
+          .from('distributor_details')
+          .insert({
+            profile_id: profileRow.id,
+            gstin_number: signupProfile.gstinNumber || '',
+            business_name: signupProfile.businessName || null,
+            business_address: signupProfile.businessAddress || null,
+          });
+      } else if (role === 'retailer') {
+        await (await import('@/integrations/supabase/client')).supabase
+          .from('retailer_details')
+          .insert({
+            profile_id: profileRow.id,
+            gstin_number: signupProfile.gstinNumber || '',
+            fssai_license: signupProfile.tradeOrFssai || '',
+            business_name: signupProfile.businessName || null,
+            business_address: signupProfile.businessAddress || null,
+          });
+      }
+
+      toast({ title: 'Account ready', description: 'Your profile has been created.' });
+      window.location.href = '/';
+    } catch (e: any) {
+      toast({ title: 'Profile setup failed', description: e.message, variant: 'destructive' });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleForgotPassword = async () => {
@@ -333,15 +396,7 @@ const Auth = () => {
                     </div>
                   )}
 
-                  {/* Consumer */}
-                  {role === 'consumer' && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="otp">OTP (will be sent to mobile)</Label>
-                        <Input id="otp" name="otp" value={''} onChange={() => {}} placeholder="Enter OTP" />
-                      </div>
-                    </div>
-                  )}
+                  {/* Consumer - no OTP step */}
 
                   <Button 
                     type="submit" 
