@@ -32,6 +32,16 @@ export const Navbar = () => {
             }`}>
               Trace Produce
             </Link>
+            <Link to="/agro-news" className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+              isActive("/agro-news") ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground"
+            }`}>
+              Agro News
+            </Link>
+            <Link to="/skill-center" className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+              isActive("/skill-center") ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground"
+            }`}>
+              Skill Center
+            </Link>
             <button
               className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 isActive("/dashboard") ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground"
@@ -96,6 +106,20 @@ export const Navbar = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Trace Produce
+              </Link>
+              <Link
+                to="/agro-news"
+                className="px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Agro News
+              </Link>
+              <Link
+                to="/skill-center"
+                className="px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Skill Center
               </Link>
               <button
                 className="px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground text-left"

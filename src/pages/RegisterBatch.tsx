@@ -16,10 +16,8 @@ const RegisterBatch = () => {
     quantity: "",
     weight: "",
     location: "",
-    qualityGrade: "",
-    organicCertified: false,
     description: "",
-    qualityReportFile: null as File | null
+    
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [generatedQR, setGeneratedQR] = useState<string | null>(null);
@@ -30,22 +28,13 @@ const RegisterBatch = () => {
     "Broccoli", "Cauliflower", "Onions", "Potatoes", "Corn"
   ];
 
-  const qualityGrades = ["A", "B", "C"];
+  
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFormData(prev => ({ ...prev, qualityReportFile: file }));
-      toast({
-        title: "File Uploaded",
-        description: `Quality report "${file.name}" uploaded successfully.`,
-      });
-    }
-  };
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -202,19 +191,7 @@ const RegisterBatch = () => {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="qualityGrade">Quality Grade</Label>
-                  <Select value={formData.qualityGrade} onValueChange={(value) => handleInputChange("qualityGrade", value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select grade" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {qualityGrades.map(grade => (
-                        <SelectItem key={grade} value={grade}>Grade {grade}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                
               </div>
 
               <div className="space-y-2">
@@ -228,35 +205,7 @@ const RegisterBatch = () => {
                 />
               </div>
 
-              {/* Quality Report Upload */}
-              <div className="space-y-2">
-                <Label htmlFor="qualityReport">Quality Report</Label>
-                <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
-                  <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Upload quality inspection report (PDF, JPG, PNG)
-                  </p>
-                  <input
-                    type="file"
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    onChange={handleFileUpload}
-                    className="hidden"
-                    id="qualityReport"
-                  />
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    onClick={() => document.getElementById("qualityReport")?.click()}
-                  >
-                    Choose File
-                  </Button>
-                  {formData.qualityReportFile && (
-                    <p className="text-sm text-success mt-2">
-                      ✓ {formData.qualityReportFile.name}
-                    </p>
-                  )}
-                </div>
-              </div>
+              
 
               {/* Submit Button */}
               <Button 

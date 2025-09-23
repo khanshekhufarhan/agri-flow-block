@@ -10,7 +10,9 @@ import {
   DollarSign,
   Calendar,
   MapPin,
-  Eye
+  Eye,
+  Newspaper,
+  GraduationCap
 } from 'lucide-react';
 
 interface FarmerDashboardProps {
@@ -132,6 +134,24 @@ const FarmerDashboard = ({ profile }: FarmerDashboardProps) => {
                 <div className="text-center">
                   <MapPin className="h-6 w-6 mx-auto mb-2" />
                   <span>Track Supply Chain</span>
+                </div>
+              </Link>
+            </Button>
+
+            <Button asChild variant="outline" className="h-16">
+              <Link to="/agro-news">
+                <div className="text-center">
+                  <Newspaper className="h-6 w-6 mx-auto mb-2" />
+                  <span>Agro News</span>
+                </div>
+              </Link>
+            </Button>
+
+            <Button asChild variant="outline" className="h-16">
+              <Link to="/skill-center">
+                <div className="text-center">
+                  <GraduationCap className="h-6 w-6 mx-auto mb-2" />
+                  <span>Skill Center</span>
                 </div>
               </Link>
             </Button>

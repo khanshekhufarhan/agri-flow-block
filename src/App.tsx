@@ -12,6 +12,8 @@ import RegisterBatch from "./pages/RegisterBatch";
 import Auth from "./pages/Auth";
 import StakeholderRegistration from "./pages/StakeholderRegistration";
 import Profile from "./pages/Profile";
+import AgroNews from "./pages/AgroNews";
+import SkillCenter from "./pages/SkillCenter";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +34,8 @@ const App = () => (
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/farmer/register-batch" element={<RegisterBatch />} />
+              <Route path="/agro-news" element={<AgroNews />} />
+              <Route path="/skill-center" element={<SkillCenter />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
