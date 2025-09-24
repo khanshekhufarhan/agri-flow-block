@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Edit, Save, X, User, FileText, CreditCard, Truck } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
-import { Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 
 interface ProfileData {
   id: string;
@@ -186,6 +186,26 @@ const Profile = () => {
     }
   };
 
+  // Define helper functions first to avoid hook order issues
+  const getRoleIcon = (role: string) => {
+    switch (role) {
+      case 'farmer': return '🌾';
+      case 'distributor': return '🚛';
+      case 'retailer': return '🏪';
+      case 'consumer': return '👤';
+      default: return '👤';
+    }
+  };
+
+  const getVerificationColor = (status: string) => {
+    switch (status) {
+      case 'verified': return 'bg-green-100 text-green-800';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'rejected': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
   if (loading || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -205,32 +225,13 @@ const Profile = () => {
           <CardContent className="pt-6">
             <p className="text-center text-muted-foreground">Profile not found. Please complete your registration.</p>
             <Button asChild className="w-full mt-4">
-              <a href="/register">Complete Registration</a>
+              <Link to="/register">Complete Registration</Link>
             </Button>
           </CardContent>
         </Card>
       </div>
     );
   }
-
-  const getRoleIcon = (role: string) => {
-    switch (role) {
-      case 'farmer': return '🌾';
-      case 'distributor': return '🚛';
-      case 'retailer': return '🏪';
-      case 'consumer': return '👤';
-      default: return '👤';
-    }
-  };
-
-  const getVerificationColor = (status: string) => {
-    switch (status) {
-      case 'verified': return 'bg-green-100 text-green-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'rejected': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
 
   return (
     <div className="min-h-screen bg-muted/30 p-4">
