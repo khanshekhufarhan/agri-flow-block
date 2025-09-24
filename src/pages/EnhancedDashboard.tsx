@@ -76,6 +76,37 @@ const EnhancedDashboard = () => {
     }
   }, [user, loading]);
 
+  // Define helper functions first to avoid hook order issues
+  const getVerificationBadge = (status: string) => {
+    switch (status) {
+      case 'verified':
+        return <Badge variant="default" className="bg-success text-success-foreground">Verified</Badge>;
+      case 'pending':
+        return <Badge variant="secondary">Pending Verification</Badge>;
+      case 'rejected':
+        return <Badge variant="destructive">Verification Rejected</Badge>;
+      default:
+        return <Badge variant="secondary">Unknown Status</Badge>;
+    }
+  };
+
+  const renderRoleSpecificDashboard = () => {
+    if (!profile) return null;
+    
+    switch (profile.role) {
+      case 'farmer':
+        return <FarmerDashboard profile={profile} />;
+      case 'distributor':
+        return <DistributorDashboard profile={profile} />;
+      case 'retailer':
+        return <RetailerDashboard profile={profile} />;
+      case 'consumer':
+        return <ConsumerDashboard profile={profile} />;
+      default:
+        return <div>Unknown role</div>;
+    }
+  };
+
   // Redirect to auth if not logged in
   if (!loading && !user) {
     return <Navigate to="/auth" replace />;
@@ -95,34 +126,6 @@ const EnhancedDashboard = () => {
   }
 
   if (!profile) return null;
-
-  const getVerificationBadge = (status: string) => {
-    switch (status) {
-      case 'verified':
-        return <Badge variant="default" className="bg-success text-success-foreground">Verified</Badge>;
-      case 'pending':
-        return <Badge variant="secondary">Pending Verification</Badge>;
-      case 'rejected':
-        return <Badge variant="destructive">Verification Rejected</Badge>;
-      default:
-        return <Badge variant="secondary">Unknown Status</Badge>;
-    }
-  };
-
-  const renderRoleSpecificDashboard = () => {
-    switch (profile.role) {
-      case 'farmer':
-        return <FarmerDashboard profile={profile} />;
-      case 'distributor':
-        return <DistributorDashboard profile={profile} />;
-      case 'retailer':
-        return <RetailerDashboard profile={profile} />;
-      case 'consumer':
-        return <ConsumerDashboard profile={profile} />;
-      default:
-        return <div>Invalid role</div>;
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 to-secondary/5 p-4">
