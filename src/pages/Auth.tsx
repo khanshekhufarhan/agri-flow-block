@@ -66,6 +66,13 @@ const Auth = () => {
     setSigninData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const roleLabel = useMemo(() => {
+    if (role === 'farmer') return 'Land Record / FPO ID';
+    if (role === 'distributor') return 'Trade License Upload (reference)';
+    if (role === 'retailer') return 'FSSAI License Number';
+    return '';
+  }, [role]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -196,12 +203,6 @@ const Auth = () => {
     await resetPassword(signinData.identifier);
   };
 
-  const roleLabel = useMemo(() => {
-    if (role === 'farmer') return 'Land Record / FPO ID';
-    if (role === 'distributor') return 'Trade License Upload (reference)';
-    if (role === 'retailer') return 'FSSAI License Number';
-    return '';
-  }, [role]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10 p-4">
