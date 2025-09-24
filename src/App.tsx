@@ -7,7 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import TraceProduce from "./pages/TraceProduce";
-import Dashboard from "./pages/Dashboard";
+import EnhancedDashboard from "./pages/EnhancedDashboard";
 import RegisterBatch from "./pages/RegisterBatch";
 import Auth from "./pages/Auth";
 import StakeholderRegistration from "./pages/StakeholderRegistration";
@@ -31,7 +31,7 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/register" element={<StakeholderRegistration />} />
               <Route path="/trace" element={<TraceProduce />} />
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/dashboard" element={<EnhancedDashboard />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/farmer/register-batch" element={<RegisterBatch />} />
               <Route path="/agro-news" element={<AgroNews />} />
