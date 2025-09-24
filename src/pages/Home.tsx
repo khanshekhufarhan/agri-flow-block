@@ -1,14 +1,27 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, Shield, Eye, Users, Scan } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import TraceProduceAuthModal from "@/components/TraceProduceAuthModal";
 import heroImage from "@/assets/hero-farm.jpg";
 import produceQRImage from "@/assets/produce-qr.jpg";
 import farmerTechImage from "@/assets/farmer-tech.jpg";
 
 const Home = () => {
   const { user } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  const handleTraceProduceClick = () => {
+    if (user) {
+      // User is logged in, redirect to dashboard
+      window.location.href = '/dashboard';
+    } else {
+      // User is not logged in, show auth modal
+      setShowAuthModal(true);
+    }
+  };
   
   const features = [
     {
@@ -57,11 +70,13 @@ const Home = () => {
               Ensure fair pricing, origin verification, and quality transparency.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="bg-white text-primary hover:bg-white/90">
-                <Link to="/trace" className="flex items-center">
-                  Trace Produce
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
+              <Button 
+                size="lg" 
+                className="bg-white text-primary hover:bg-white/90"
+                onClick={handleTraceProduceClick}
+              >
+                Trace Produce
+                <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               {user ? (
                 <div className="flex flex-col sm:flex-row gap-4">
@@ -211,6 +226,12 @@ const Home = () => {
           )}
         </div>
       </section>
+
+      {/* Authentication Modal */}
+      <TraceProduceAuthModal 
+        open={showAuthModal} 
+        onOpenChange={setShowAuthModal} 
+      />
     </div>
   );
 };

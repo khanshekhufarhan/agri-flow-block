@@ -107,9 +107,9 @@ const EnhancedDashboard = () => {
     }
   };
 
-  // Redirect to auth if not logged in
+  // Redirect to home if not logged in
   if (!loading && !user) {
-    return <Navigate to="/auth" replace />;
+    return <Navigate to="/" replace />;
   }
 
   // Redirect to registration if no profile
@@ -132,7 +132,7 @@ const EnhancedDashboard = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold text-foreground">
                 Welcome, {profile.full_name}
@@ -143,6 +143,12 @@ const EnhancedDashboard = () => {
             </div>
             <div className="flex items-center space-x-4">
               {getVerificationBadge(profile.verification_status)}
+              <Button asChild variant="outline" size="sm">
+                <Link to="/profile">
+                  <Eye className="h-4 w-4 mr-2" />
+                  View Profile
+                </Link>
+              </Button>
             </div>
           </div>
         </div>
