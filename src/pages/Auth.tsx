@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,6 +18,7 @@ const PENDING_REG_KEY = 'pending_registration_v1';
 const Auth = () => {
   const { signIn, signUp, resetPassword, user, loading } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin');
   const [isLoading, setIsLoading] = useState(false);
   const [useOtp, setUseOtp] = useState(false);
@@ -47,23 +48,6 @@ const Auth = () => {
     businessAddress: '',
   });
 
-  // Redirect if already authenticated
-  if (user && !loading) {
-    return <Navigate to="/" replace />;
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  const handleSigninChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSigninData(prev => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
   // Read ?tab=signup or ?tab=signin from URL
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -72,6 +56,23 @@ const Auth = () => {
       setActiveTab(tab);
     }
   }, [location.search]);
+
+  // Redirect if already authenticated
+  if (user && !loading) {
+    return <Navigate to="/" replace />;
+  }
+
+  const handleSigninChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSigninData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   const handleSignupAccountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSignupAccount(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -179,7 +180,7 @@ const Auth = () => {
       }
 
       toast({ title: 'Account ready', description: 'Your profile has been created.' });
-      window.location.href = '/';
+      navigate('/', { replace: true });
     } catch (e: any) {
       toast({ title: 'Profile setup failed', description: e.message, variant: 'destructive' });
     } finally {
