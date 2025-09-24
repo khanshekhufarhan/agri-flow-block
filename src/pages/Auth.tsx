@@ -57,21 +57,22 @@ const Auth = () => {
     }
   }, [location.search]);
 
-  // Redirect if already authenticated
-  if (user && !loading) {
-    return <Navigate to="/" replace />;
-  }
-
-  const handleSigninChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSigninData(prev => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
   const roleLabel = useMemo(() => {
     if (role === 'farmer') return 'Land Record / FPO ID';
     if (role === 'distributor') return 'Trade License Upload (reference)';
     if (role === 'retailer') return 'FSSAI License Number';
     return '';
   }, [role]);
+
+  // Define functions after all hooks
+  const handleSigninChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSigninData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  // Early returns ONLY after all hooks are defined
+  if (user && !loading) {
+    return <Navigate to="/" replace />;
+  }
 
   if (loading) {
     return (
