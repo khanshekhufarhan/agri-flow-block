@@ -8,20 +8,25 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { QrCode, Upload, CheckCircle, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 const RegisterBatch = () => {
   const [formData, setFormData] = useState({
     cropType: "",
     harvestDate: "",
+    expiryDate: "",
     quantity: "",
     weight: "",
     location: "",
     description: "",
-    
+    pricePerKg: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [generatedQR, setGeneratedQR] = useState<string | null>(null);
+  const [batchData, setBatchData] = useState<any>(null);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const cropTypes = [
     "Tomatoes", "Bell Peppers", "Carrots", "Lettuce", "Spinach", 
@@ -40,7 +45,7 @@ const RegisterBatch = () => {
     e.preventDefault();
     
     // Basic validation
-    if (!formData.cropType || !formData.harvestDate || !formData.quantity) {
+    if (!formData.cropType || !formData.harvestDate || !formData.quantity || !formData.pricePerKg) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields.",
@@ -49,19 +54,78 @@ const RegisterBatch = () => {
       return;
     }
 
+    if (!user) {
+      toast({
+        title: "Authentication Error",
+        description: "You must be logged in to register a batch.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
-    // Simulate blockchain transaction
-    setTimeout(() => {
-      const batchId = `BATCH-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
-      setGeneratedQR(`https://agroconnect.app/trace/${batchId}`);
+    try {
+      // First, get the user's profile to get the profile ID
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+
+      if (profileError || !profile) {
+        throw new Error('Failed to fetch user profile');
+      }
+
+      // Generate batch code
+      const batchCode = `BATCH-${new Date().getFullYear()}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
+      
+      // Save batch to database
+      const { data: batchData, error: batchError } = await supabase
+        .from('produce_batches')
+        .insert({
+          farmer_id: profile.id,
+          crop_type: formData.cropType,
+          batch_code: batchCode,
+          quantity_kg: parseFloat(formData.quantity),
+          price_per_kg: parseFloat(formData.pricePerKg),
+          harvest_date: formData.harvestDate,
+          expiry_date: formData.expiryDate,
+          status: 'harvested'
+        })
+        .select()
+        .single();
+
+      if (batchError) {
+        throw batchError;
+      }
+
+      // Generate QR code URL
+      const qrUrl = `https://agroconnect.app/trace/${batchData.id}`;
+      
+      // Update batch with QR code URL
+      await supabase
+        .from('produce_batches')
+        .update({ qr_code_url: qrUrl })
+        .eq('id', batchData.id);
+
+      setBatchData(batchData);
+      setGeneratedQR(qrUrl);
       setIsSubmitting(false);
       
       toast({
         title: "Batch Registered Successfully",
-        description: `Batch ID: ${batchId} has been recorded on the blockchain.`,
+        description: `Batch ${batchCode} has been saved to the database.`,
       });
-    }, 3000);
+    } catch (error) {
+      console.error('Error registering batch:', error);
+      setIsSubmitting(false);
+      toast({
+        title: "Registration Failed",
+        description: "Failed to register batch. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   if (generatedQR) {
@@ -86,13 +150,16 @@ const RegisterBatch = () => {
               
               <div className="space-y-2">
                 <p className="text-foreground">
-                  <strong>Batch ID:</strong> BATCH-2024-{Math.floor(Math.random() * 1000).toString().padStart(3, '0')}
+                  <strong>Batch ID:</strong> {batchData?.batch_code}
                 </p>
                 <p className="text-foreground">
                   <strong>Crop:</strong> {formData.cropType}
                 </p>
                 <p className="text-foreground">
-                  <strong>Quantity:</strong> {formData.quantity}
+                  <strong>Quantity:</strong> {formData.quantity} kg
+                </p>
+                <p className="text-foreground">
+                  <strong>Price:</strong> ₹{formData.pricePerKg}/kg
                 </p>
               </div>
 
@@ -178,6 +245,28 @@ const RegisterBatch = () => {
                     placeholder="e.g., 250 lbs"
                     value={formData.weight}
                     onChange={(e) => handleInputChange("weight", e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="expiryDate">Expiry Date *</Label>
+                  <Input
+                    id="expiryDate"
+                    type="date"
+                    value={formData.expiryDate}
+                    onChange={(e) => handleInputChange("expiryDate", e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="pricePerKg">Price per KG (₹) *</Label>
+                  <Input
+                    id="pricePerKg"
+                    type="number"
+                    step="0.01"
+                    placeholder="e.g., 50.00"
+                    value={formData.pricePerKg}
+                    onChange={(e) => handleInputChange("pricePerKg", e.target.value)}
                   />
                 </div>
 

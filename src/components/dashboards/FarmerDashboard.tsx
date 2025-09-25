@@ -159,16 +159,16 @@ const FarmerDashboard = ({ profile }: FarmerDashboardProps) => {
         </CardContent>
       </Card>
 
-      {/* Recent Batches */}
+      {/* Active Batches */}
       <Card>
         <CardHeader>
-          <CardTitle>Recent Produce Batches</CardTitle>
-          <CardDescription>Your latest registered batches</CardDescription>
+          <CardTitle>Active Batches</CardTitle>
+          <CardDescription>Batches currently in the supply chain</CardDescription>
         </CardHeader>
         <CardContent>
-          {recentBatches.length > 0 ? (
+          {recentBatches.filter(batch => batch.status !== 'sold_to_consumer').length > 0 ? (
             <div className="space-y-4">
-              {recentBatches.map((batch) => (
+              {recentBatches.filter(batch => batch.status !== 'sold_to_consumer').map((batch) => (
                 <div key={batch.id} className="flex items-center justify-between p-4 border rounded-lg">
                   <div>
                     <h4 className="font-semibold">{batch.crop_type}</h4>
@@ -176,7 +176,8 @@ const FarmerDashboard = ({ profile }: FarmerDashboardProps) => {
                       Batch: {batch.batch_code} • {batch.quantity_kg} kg • ₹{batch.price_per_kg}/kg
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      Harvest: {new Date(batch.harvest_date).toLocaleDateString()}
+                      Harvest: {new Date(batch.harvest_date).toLocaleDateString()} • 
+                      Expiry: {new Date(batch.expiry_date).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="flex items-center space-x-2">
@@ -199,10 +200,51 @@ const FarmerDashboard = ({ profile }: FarmerDashboardProps) => {
           ) : (
             <div className="text-center py-8">
               <Package className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">No batches registered yet</p>
+              <p className="text-muted-foreground">No active batches</p>
               <Button asChild className="mt-4">
                 <Link to="/farmer/register-batch">Register Your First Batch</Link>
               </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Past Batches / Transaction History */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Transaction History</CardTitle>
+          <CardDescription>Completed and sold batches</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {recentBatches.filter(batch => batch.status === 'sold_to_consumer').length > 0 ? (
+            <div className="space-y-4">
+              {recentBatches.filter(batch => batch.status === 'sold_to_consumer').map((batch) => (
+                <div key={batch.id} className="flex items-center justify-between p-4 border rounded-lg bg-muted/30">
+                  <div>
+                    <h4 className="font-semibold">{batch.crop_type}</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Batch: {batch.batch_code} • {batch.quantity_kg} kg • ₹{batch.price_per_kg}/kg
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Harvest: {new Date(batch.harvest_date).toLocaleDateString()} • 
+                      Completed: {new Date(batch.updated_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="px-2 py-1 text-xs rounded-full bg-success/20 text-success">
+                      Completed
+                    </span>
+                    <Button size="sm" variant="ghost">
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <Package className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+              <p className="text-muted-foreground">No completed transactions yet</p>
             </div>
           )}
         </CardContent>
